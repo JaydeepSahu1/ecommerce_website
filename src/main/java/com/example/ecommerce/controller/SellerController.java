@@ -5,12 +5,14 @@ import com.example.ecommerce.domain.AccountStatus;
 import com.example.ecommerce.model.Seller;
 import com.example.ecommerce.model.SellerReport;
 import com.example.ecommerce.model.VerificationCode;
+import com.example.ecommerce.repository.SellerReportRepository;
 import com.example.ecommerce.repository.VerificationCodeRepository;
 import com.example.ecommerce.request.LoginRequest;
 import com.example.ecommerce.response.ApiResponse;
 import com.example.ecommerce.response.AuthResponse;
 import com.example.ecommerce.service.AuthService;
 import com.example.ecommerce.service.EmailService;
+import com.example.ecommerce.service.SellerReportService;
 import com.example.ecommerce.service.SellerService;
 import com.example.ecommerce.utils.OtpUtil;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +32,7 @@ public class SellerController
     private final VerificationCodeRepository verificationCodeRepository;
     private final AuthService  authService;
     private final EmailService emailService;
-
+    private final SellerReportService sellerReportService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> LoginSeller(@RequestBody LoginRequest req) throws Exception
@@ -96,11 +98,14 @@ public class SellerController
         return new ResponseEntity<>(seller, HttpStatus.OK);
     }
 
-//    @GetMapping("/report")
-//    public ResponseEntity<SellerReport> getSellerReport(@RequestHeader("Authorization") String jwt) throws Exception
-//    {
-//        Seller seller=sellerService.
-//    }
+    @GetMapping("/report")
+    public ResponseEntity<SellerReport> getSellerReport(@RequestHeader("Authorization") String jwt) throws Exception
+    {
+        Seller seller=sellerService.getSellerProfile(jwt);
+        SellerReport sellerReport = sellerReportService.getSellerReport(seller);
+
+        return new ResponseEntity<>(sellerReport, HttpStatus.OK);
+    }
 
     @GetMapping
     public ResponseEntity<List<Seller>> getAllSeller(@RequestParam(required = false)AccountStatus status) throws Exception
