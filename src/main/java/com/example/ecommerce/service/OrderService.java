@@ -1,10 +1,7 @@
 package com.example.ecommerce.service;
 
 import com.example.ecommerce.domain.OrderStatus;
-import com.example.ecommerce.model.Address;
-import com.example.ecommerce.model.Cart;
-import com.example.ecommerce.model.Order;
-import com.example.ecommerce.model.User;
+import com.example.ecommerce.model.*;
 
 import java.util.List;
 import java.util.Set;
@@ -22,4 +19,6 @@ public interface OrderService {
     Order updateOrderStatus(Long orderId, OrderStatus orderStatus) throws Exception;
 
     Order cancelOrder(Long orderId,User user) throws Exception;
+
+    OrderItem findById(Long id) throws Exception;
 }
