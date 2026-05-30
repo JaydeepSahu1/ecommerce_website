@@ -19,6 +19,7 @@ public class PaymentController
     private final SellerService sellerService;
     private final OrderService orderService;
     private final SellerReportService sellerReportService;
+    private final TransactionService transactionService;
 
     @GetMapping("/api/payment/{paymentId}")
     public ResponseEntity<ApiResponse> paymentSuccessHandler(
@@ -43,6 +44,7 @@ public class PaymentController
         {
             for(Order order:paymentOrder.getOrders())
             {
+                transactionService.createTransaction(order);
                 Seller seller=sellerService.getSellerById(order.getSellerId());
                 SellerReport report =sellerReportService.getSellerReport(seller);
                 report.setTotalOrders(report.getTotalOrders());
