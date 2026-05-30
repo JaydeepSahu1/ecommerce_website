@@ -2,10 +2,10 @@ package com.example.ecommerce.controller;
 
 import com.example.ecommerce.domain.PaymentMethod;
 import com.example.ecommerce.model.*;
-import com.example.ecommerce.repository.OrderItemRepository;
-import com.example.ecommerce.repository.OrderRepository;
+import com.example.ecommerce.repository.PaymentOrderRepository;
 import com.example.ecommerce.response.PaymentLinkResponse;
 import com.example.ecommerce.service.*;
+import com.razorpay.PaymentLink;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,8 @@ public class OrderController
     private final CartService cartService;
     private final SellerService sellerService;
     private final SellerReportService sellerReportService;
-
+    private final PaymentService paymentService;
+    private final PaymentOrderRepository paymentOrderRepository;
 
     @PostMapping()
     public ResponseEntity<PaymentLinkResponse> createOrderHandler(
@@ -33,17 +34,34 @@ public class OrderController
             @RequestHeader("Authorization") String jwt)
         throws Exception {
 
-        User user =userService.findUserbyJwtToken(jwt);
-        Cart cart=cartService.findUserCart(user);
-        Set<Order> orders =orderService.createOrder(user,shippingAddress,cart);
+        User user = userService.findUserbyJwtToken(jwt);
+        Cart cart = cartService.findUserCart(user);
+        Set<Order> orders = orderService.createOrder(user, shippingAddress, cart);
 
-//      PaymentOrder paymentOrder=paymentService.createOrder(user,orders);
+        PaymentOrder paymentOrder = paymentService.createOrder(user, orders);
 
         PaymentLinkResponse res = new PaymentLinkResponse();
-//
-//        if(paymentMethod.equals(PaymentMethod.RAZORPAY)){
-//            PaymentLink payment=paymentSe
-//        }
+
+        if (paymentMethod.equals(PaymentMethod.RAZORPAY)) {
+            PaymentLink payment = paymentService.createRazorPaymentLink(user,
+                    paymentOrder.getAmount(),
+                    paymentOrder.getId());
+            String paymentUrl = payment.get("short_url");
+            String paymentUrlId = payment.get("id");
+
+        res.setPayment_link_url(paymentUrl);
+
+        paymentOrder.setPaymentLinkId(paymentUrlId);
+        paymentOrderRepository.save(paymentOrder);
+        }
+        else
+        {
+            String paymentUrl=paymentService.createStripePaymentLink(user,
+                    paymentOrder.getAmount(),
+                    paymentOrder.getId());
+
+            res.setPayment_link_url(paymentUrl);
+        }
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
