@@ -32,7 +32,7 @@ public class PaymentController
 
         PaymentLinkResponse paymentResponse;
 
-        PaymentOrder paymentOrder=paymentService.getPaymentOrderByPaymentId(Long.valueOf(paymentId));
+        PaymentOrder paymentOrder=paymentService.getPaymentOrderByPaymentId(paymentId);
 
         boolean paymentSuccess = paymentService.ProceedPaymentOrder(
                 paymentOrder,

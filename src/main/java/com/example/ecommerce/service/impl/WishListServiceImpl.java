@@ -24,7 +24,7 @@ public class WishListServiceImpl implements WishListService {
     @Override
     public WishList getWishListbyUserId(User user)
     {
-        WishList wishlist= wishListRepository.findbyUserId(user.getId());
+        WishList wishlist= wishListRepository.findByUserId(user.getId());
         if(wishlist==null)
         {
             wishlist=createWishList(user);
@@ -34,7 +34,7 @@ public class WishListServiceImpl implements WishListService {
 
     @Override
     public WishList addProductToWishList(User user, Product product) {
-        WishList wishList = wishListRepository.findbyUserId(user.getId());
+        WishList wishList = wishListRepository.findByUserId(user.getId());
 
         if(wishList.getProducts().contains(product))
         {

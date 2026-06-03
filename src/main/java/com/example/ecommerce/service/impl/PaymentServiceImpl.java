@@ -53,7 +53,7 @@ public class PaymentServiceImpl implements PaymentService
     }
 
     @Override
-    public PaymentOrder getPaymentOrderByPaymentId(Long orderId) throws Exception {
+    public PaymentOrder getPaymentOrderByPaymentId(String orderId) throws Exception {
         PaymentOrder paymentOrder=paymentOrderRepository.findByPaymentLinkId(orderId);
         if(paymentOrder!=null)
         {
