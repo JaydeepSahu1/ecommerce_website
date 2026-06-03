@@ -3,12 +3,13 @@ package com.example.ecommerce.controller;
 import com.example.ecommerce.model.Cart;
 import com.example.ecommerce.model.Coupon;
 import com.example.ecommerce.model.User;
-import com.example.ecommerce.service.CartService;
 import com.example.ecommerce.service.CouponService;
 import com.example.ecommerce.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,7 +18,6 @@ public class AdminCouponController {
 
     private final CouponService couponService;
     private final UserService userService;
-    private final CartService cartService;
 
     @PostMapping("/apply")
     public ResponseEntity<Cart> applyCoupon(
@@ -48,5 +48,17 @@ public class AdminCouponController {
         return ResponseEntity.ok(createdcoupon);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/admin/delete/{id}")
+    public ResponseEntity<?> deleteCoupon(
+            @PathVariable Long id
+    ) throws Exception {
+        couponService.deleteCouponbyId(id);
+        return ResponseEntity.ok("Coupon deleted successfully");
+    }
+
+    @GetMapping("/admin/all")
+    public ResponseEntity<List<Coupon>> getAllCoupons() {
+        List<Coupon> coupons =couponService.findallCoupons();
+        return ResponseEntity.ok(coupons);
+    }
 }
